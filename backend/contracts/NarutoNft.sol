@@ -32,9 +32,9 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
   uint256 private s_tokenCounter;
   uint256 internal constant MAX_CHANCE_VALUE = 100;
   string[5] internal s_characterTokenUris;
-  bool private s_initialized;
 
   // VRF Helpers
+  mapping(uint256 => string) public s_requestIdToTokenUri;
   mapping(uint256 => address) public s_requestIdToSender;
 
   // Events
@@ -79,10 +79,13 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
   ) internal override {
     address nftOwner = s_requestIdToSender[requestId];
     uint256 newTokenId = s_tokenCounter;
+    s_tokenCounter = s_tokenCounter + 1;
     uint256 randomNumber = randomWords[0] % MAX_CHANCE_VALUE;
     Character narutoCharacter = getCharacterFromRandomNumber(randomNumber);
+    string memory tokenUrl = s_characterTokenUris[uint256(narutoCharacter)];
+    s_requestIdToTokenUri[requestId] = tokenUrl;
     _safeMint(nftOwner, newTokenId);
-    _setTokenURI(newTokenId, s_characterTokenUris[uint256(narutoCharacter)]);
+    _setTokenURI(newTokenId, tokenUrl);
     emit NftMinted(narutoCharacter, nftOwner);
   }
 
@@ -92,10 +95,10 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
     uint256 cumSum = 0;
     uint256[5] memory chanceArray = getChanceArray();
     for (uint256 i = 0; i < chanceArray.length; i++) {
-      if (randomNumber >= cumSum && randomNumber <= cumSum + chanceArray[i]) {
+      if (randomNumber >= cumSum && randomNumber < chanceArray[i]) {
         return Character(i);
       }
-      cumSum += chanceArray[i];
+      cumSum = chanceArray[i];
     }
     revert NarutoNft__RangeOutOfBounds();
   }
@@ -109,7 +112,7 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
   }
 
   function getChanceArray() public pure returns (uint256[5] memory) {
-    return [5, 15, 30, 50, MAX_CHANCE_VALUE];
+    return [10, 25, 45, 70, MAX_CHANCE_VALUE];
   }
 
   function getMintFee() public view returns (uint256) {
@@ -124,5 +127,9 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
 
   function getTokenCounter() public view returns (uint256) {
     return s_tokenCounter;
+  }
+
+  function getTokenUrisFromRequestId(uint256 requestId) public view returns (string memory) {
+    return s_requestIdToTokenUri[requestId];
   }
 }

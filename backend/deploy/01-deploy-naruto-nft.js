@@ -11,6 +11,8 @@ const {
 
 const imagesLocation = "./images";
 
+const FUND_AMOUNT = ethers.utils.parseEther("10");
+
 const metaDataTemplate = {
   name: "",
   description: "",
@@ -31,6 +33,15 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   if (process.env.UPLOAD_TO_PINATA === "true") {
     tokenUris = await handleTokenUris();
+  } else {
+    // This URL is obtained by uploading token metadata in pinata
+    tokenUris = [
+      "ipfs://QmU9MbLW7FWevB83GsCsBs7LmYUUVysbxyYGPGBbAvWP9R",
+      "ipfs://QmdBtFhxwxiDMEyFKAX87cH2bEbvvLFiCionKZVkrxu2iE",
+      "ipfs://QmUgBaz99WE31Cf4kkkswjEAWDek4BDyyDg27rRtRdGdnH",
+      "ipfs://QmNbEtkJRvAAYbp9SfG5NofDx5yDodiACT43gWoi1bZnmh",
+      "ipfs://QmQBtM8vNA8icCkEjGyxyLVXXocTKRTPiaV2X6eck5XRbE",
+    ];
   }
 
   let vrfCoordinatorV2Address, subscriptionId;
@@ -65,6 +76,15 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     waitConfirmations: network.config.blockConfirmations || 1,
   });
 
+  if (developmentChains.includes(network.name)) {
+    const vrfCoordinatorV2Mock = await ethers.getContract(
+      "VRFCoordinatorV2Mock"
+    );
+    const narutoNft = await ethers.getContract("NarutoNft");
+    await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_AMOUNT);
+    await vrfCoordinatorV2Mock.addConsumer(subscriptionId, narutoNft.address);
+  }
+
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
@@ -90,3 +110,5 @@ async function handleTokenUris() {
   }
   return tokenUris;
 }
+
+module.exports.tags = ["all", "narutoNft", "main"];

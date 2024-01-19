@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "moralis": "^2.23.2",
+    "react-moralis": "^1.4.0",
+    "web3uikit": "^1.0.4",
+    "ethers": "^5.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
