@@ -81,29 +81,29 @@ const { developmentChains } = require("../helper-hardhat-config");
       });
 
       describe("getCharacterFromRandomNumber", () => {
-        it("should return naruto if randomNumber < 5", async function () {
-          const expectedValue = await narutoNft.getCharacterFromRandomNumber(3);
+        it("should return naruto if randomNumber < 10", async function () {
+          const expectedValue = await narutoNft.getCharacterFromRandomNumber(7);
           assert.equal(0, expectedValue);
         });
-        it("should return sasuke if randomNumber is between 5-15", async function () {
+        it("should return sasuke if randomNumber is between 10-25", async function () {
           const expectedValue = await narutoNft.getCharacterFromRandomNumber(
-            10
+            15
           );
           assert.equal(1, expectedValue);
         });
-        it("should return kakashi if randomNumber is between 15 - 30", async function () {
+        it("should return kakashi if randomNumber is between 25 - 45", async function () {
           const expectedValue = await narutoNft.getCharacterFromRandomNumber(
-            21
+            35
           );
           assert.equal(2, expectedValue);
         });
-        it("should return lee if randomNumber is between 30 - 50", async function () {
+        it("should return lee if randomNumber is between 45 - 70", async function () {
           const expectedValue = await narutoNft.getCharacterFromRandomNumber(
-            45
+            65
           );
           assert.equal(3, expectedValue);
         });
-        it("should return sakura if randomNumber is between 50-99", async function () {
+        it("should return sakura if randomNumber is between 70-99", async function () {
           const expectedValue = await narutoNft.getCharacterFromRandomNumber(
             77
           );

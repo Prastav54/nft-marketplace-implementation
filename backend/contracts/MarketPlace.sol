@@ -85,11 +85,14 @@ contract MarketPlace is ReentrancyGuard {
   }
 
   function updateNftListing(address nftAddress, uint256 tokenId, uint256 newPrice) external isOwner(nftAddress, tokenId, msg.sender) isListed(nftAddress, tokenId) {
+    if (newPrice <= 0){
+      revert MarketPlace__PriceLessThanZero();
+    }
     s_nftList[nftAddress][tokenId].price = newPrice; 
     emit NftListingUpdated(msg.sender, nftAddress, tokenId, newPrice);
   }
 
-  function withDrawBalance() external {
+  function withdrawBalance() external {
     uint256 balance = s_amountEarned[msg.sender];
     if (balance <= 0){
       revert MarketPlace__NoBalanceToWithDraw();
