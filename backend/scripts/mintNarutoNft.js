@@ -1,6 +1,7 @@
 const { ethers, network } = require("hardhat");
 
-async function mockOffChain() {
+async function mintNarutoNft() {
+  const narutoNft = await ethers.getContract("NarutoNft");
   let fee = await narutoNft.getMintFee();
   let requestNftResponse = await narutoNft.requestNft({
     value: fee.toString(),
@@ -11,14 +12,19 @@ async function mockOffChain() {
     const vrfCoordinatorV2Mock = await ethers.getContract(
       "VRFCoordinatorV2Mock"
     );
-    await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, narutoNft.address);
+    const mintRes = await vrfCoordinatorV2Mock.fulfillRandomWords(
+      requestId,
+      narutoNft.address
+    );
+    await mintRes.wait(1);
     console.log("Random Word Generated");
   }
   let tokenUrl = await narutoNft.getTokenUrisFromRequestId(requestId);
   console.log(`Your naruto character could be found in ${tokenUrl}`);
+  console.log("Congratulations naruto nft minted......");
 }
 
-mockOffChain()
+mintNarutoNft()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
