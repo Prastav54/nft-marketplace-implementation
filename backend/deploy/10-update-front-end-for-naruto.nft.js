@@ -1,11 +1,9 @@
 const { ethers, network } = require("hardhat");
 const fs = require("fs");
-
-const FRONT_END_ADDRESS_FILE_LOCATION_FOR_NARUTO_NFT =
-  "../frontend/src/constants/NarutoNTFContractAddress.json";
-
-const FRONT_END_ABI_FILE_LOCATION_FOR_NARUTO_NFT =
-  "../frontend/src/constants/NarutoNFTAbi.json";
+const {
+  FRONT_END_ADDRESS_FILE_LOCATION_FOR_NARUTO_NFT,
+  FRONT_END_ABI_FILE_LOCATION_FOR_NARUTO_NFT,
+} = require("../helper-hardhat-config");
 
 module.exports = async function () {
   if (process.env.UPDATE_FRONT_END === "true") {

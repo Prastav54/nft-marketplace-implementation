@@ -39,7 +39,7 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
 
   // Events
   event NftRequested(uint256 indexed requestId, address requester);
-  event NftMinted(Character narutoCharacter, address minter);
+  event NftMinted(Character narutoCharacter, address minter, string tokenUrl, uint256 tokenId);
 
   constructor(
     address vrfCoordinatorV2,
@@ -86,7 +86,7 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
     s_requestIdToTokenUri[requestId] = tokenUrl;
     _safeMint(nftOwner, newTokenId);
     _setTokenURI(newTokenId, tokenUrl);
-    emit NftMinted(narutoCharacter, nftOwner);
+    emit NftMinted(narutoCharacter, nftOwner, tokenUrl, newTokenId);
   }
 
   function getCharacterFromRandomNumber(

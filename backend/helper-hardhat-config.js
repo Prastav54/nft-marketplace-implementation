@@ -19,9 +19,21 @@ const networkConfig = {
 
 const developmentChains = ["hardhat", "localhost"];
 const VERIFICATION_BLOCK_CONFIRMATIONS = 6;
+const FRONT_END_ADDRESS_FILE_LOCATION_FOR_NARUTO_NFT =
+  "../frontend/src/constants/NarutoNTFContractAddress.json";
+const FRONT_END_ABI_FILE_LOCATION_FOR_NARUTO_NFT =
+  "../frontend/src/constants/NarutoNFTAbi.json";
+const FRONT_END_ADDRESS_FILE_LOCATION_FOR_MARKETPLACE_NFT =
+  "../frontend/src/constants/MarketPlaceContractAddress.json";
+const FRONT_END_ABI_FILE_LOCATION_FOR_MARKETPLACE_NFT =
+  "../frontend/src/constants/MarketPlaceNFTAbi.json";
 
 module.exports = {
   networkConfig,
   developmentChains,
   VERIFICATION_BLOCK_CONFIRMATIONS,
+  FRONT_END_ABI_FILE_LOCATION_FOR_NARUTO_NFT,
+  FRONT_END_ADDRESS_FILE_LOCATION_FOR_NARUTO_NFT,
+  FRONT_END_ABI_FILE_LOCATION_FOR_MARKETPLACE_NFT,
+  FRONT_END_ADDRESS_FILE_LOCATION_FOR_MARKETPLACE_NFT,
 };
