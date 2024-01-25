@@ -33,3 +33,23 @@ dataSources:
         - event: NftListingUpdated(indexed address,indexed address,uint256,uint256)
           handler: handleNftListingUpdated
       file: ./src/market-place.ts
+  - kind: ethereum
+    name: NarutoNft
+    network: sepolia
+    source:
+      address: "0xC698EaE5847f5896531cC94443A01F9A4EfE8F82"
+      abi: NarutoNft
+      startBlock: 5140570
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NftMinted
+      abis:
+        - name: NarutoNft
+          file: ./abis/NarutoNft.json
+      eventHandlers:
+        - event: NftMinted(uint8,address,string,uint256)
+          handler: handleNftMinted
+      file: ./src/naruto-nft.ts

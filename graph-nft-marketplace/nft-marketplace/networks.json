@@ -3,6 +3,10 @@
     "MarketPlace": {
       "address": "0xe129B2541C397C943C1e5B7F9187094beF6c1e27",
       "startBlock": 5140577
+    },
+    "NarutoNft": {
+      "address": "0xC698EaE5847f5896531cC94443A01F9A4EfE8F82",
+      "startBlock": 5140570
     }
   }
 }

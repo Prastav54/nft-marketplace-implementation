@@ -1,42 +1,8 @@
-type NftBought @entity(immutable: true) {
-  id: Bytes!
-  buyer: Bytes! # address
-  nftAddress: Bytes! # address
+type NftDescription @entity {
+  id: ID!
+  owner: Bytes! # address
   tokenId: BigInt! # uint256
-  price: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type NftListed @entity(immutable: true) {
-  id: Bytes!
-  seller: Bytes! # address
-  nftAddress: Bytes! # address
-  tokenId: BigInt! # uint256
-  price: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type NftListingCancelled @entity(immutable: true) {
-  id: Bytes!
-  seller: Bytes! # address
-  nftAddress: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type NftListingUpdated @entity(immutable: true) {
-  id: Bytes!
-  seller: Bytes! # address
-  nftAddress: Bytes! # address
-  tokenId: BigInt! # uint256
-  newPrice: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  price: BigInt # uint256
+  tokenUrl: String!
+  isListed: Boolean!
 }
