@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
-import NarutoNTFAbi from "../constants/NarutoNFTAbi.json";
-import NarutoNTFContractAddress from "../constants/NarutoNTFContractAddress.json";
+import NarutoNTFAbi from "../constants/addressAndABI/NarutoNFTAbi.json";
+import NarutoNTFContractAddress from "../constants/addressAndABI/NarutoNTFContractAddress.json";
 
-export default function MintNft() {
+export const MintNft = () => {
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
   const [mintFee, setMintFee] = useState();
   const [requestId, setRequestId] = useState();
@@ -49,7 +49,7 @@ export default function MintNft() {
           }
         }}
       >
-        Hello
+        Mint NFT
       </button>
       {isLoading ? (
         <>Minting.........................</>
@@ -57,10 +57,10 @@ export default function MintNft() {
         requestId && (
           <>
             Random NFT has been requested. PLease go to your nft collection page
-            to see minted nft
+            to see minted nft. It may take some time
           </>
         )
       )}
     </>
   );
-}
+};

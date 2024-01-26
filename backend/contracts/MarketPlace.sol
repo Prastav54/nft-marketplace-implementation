@@ -101,6 +101,7 @@ contract MarketPlace is ReentrancyGuard {
     if (!success){
       revert MarketPlace__TransferFailed();
     }
+    s_amountEarned[msg.sender] = 0;
   }
 
   function getNft(address nftAddress, uint256 tokenId) public view returns(NftList memory){

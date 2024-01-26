@@ -1,24 +1,12 @@
 import "./App.css";
-import { MoralisProvider } from "react-moralis";
-import Header from "./components/Header";
-import MintNft from "./components/MintNFT";
-import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import NftOwned from "./components/NftOwned";
-
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: import.meta.env.VITE_SUBGRAPH_URL,
-});
+import { Routes } from "./routes";
+import { AppProvider } from "./provider/AppProvider";
 
 function App() {
   return (
-    <MoralisProvider initializeOnMount={false}>
-      <ApolloProvider client={client}>
-        <Header />
-        {/* <MintNft /> */}
-        <NftOwned />
-      </ApolloProvider>
-    </MoralisProvider>
+    <AppProvider>
+      <Routes />
+    </AppProvider>
   );
 }
 
