@@ -45,7 +45,7 @@ export default function SellNftModal({
       functionName: "listNft",
       params: {
         nftAddress: narutoNftAddress,
-        tokenId: +tokenId,
+        tokenId: tokenId,
         price: ethers.utils.parseEther(`${price}`),
       },
     };

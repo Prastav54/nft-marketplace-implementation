@@ -44,11 +44,11 @@ contract NarutoNft is ERC721URIStorage, VRFConsumerBaseV2, Ownable {
   constructor(
     address vrfCoordinatorV2,
     uint64 subscriptionId,
-    bytes32 gasLane, // keyHash
+    bytes32 gasLane,
     uint256 mintFee,
     uint32 callbackGasLimit,
     string[5] memory characterTokenUris
-  ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("NarutoNft", "NAR") {
+  ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("NarutoNft", "NARUTO") {
     i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
     i_gasLane = gasLane;
     i_subscriptionId = subscriptionId;

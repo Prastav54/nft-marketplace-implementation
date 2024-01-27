@@ -37,9 +37,9 @@ dataSources:
     name: NarutoNft
     network: sepolia
     source:
-      address: "0xC698EaE5847f5896531cC94443A01F9A4EfE8F82"
+      address: "0x2761992756dB993C800a468D1B08431F117540Bf"
       abi: NarutoNft
-      startBlock: 5140570
+      startBlock: 5161922
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
