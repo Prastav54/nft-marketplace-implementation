@@ -97,11 +97,12 @@ contract MarketPlace is ReentrancyGuard {
     if (balance <= 0){
       revert MarketPlace__NoBalanceToWithDraw();
     }
+    s_amountEarned[msg.sender] = 0;
     (bool success,) = payable(msg.sender).call{value: balance}("");
     if (!success){
+      s_amountEarned[msg.sender] = balance;
       revert MarketPlace__TransferFailed();
     }
-    s_amountEarned[msg.sender] = 0;
   }
 
   function getNft(address nftAddress, uint256 tokenId) public view returns(NftList memory){
