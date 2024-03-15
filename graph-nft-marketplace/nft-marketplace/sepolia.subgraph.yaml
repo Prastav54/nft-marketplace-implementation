@@ -1,0 +1,55 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MarketPlace
+    network: sepolia
+    source:
+      address: "0x4c678367bfb624666e39c96578995805a1c76224"
+      abi: MarketPlace
+      startBlock: 5157081
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NftBought
+        - NftListed
+        - NftListingCancelled
+        - NftListingUpdated
+      abis:
+        - name: MarketPlace
+          file: ./abis/MarketPlace.json
+      eventHandlers:
+        - event: NftBought(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleNftBought
+        - event: NftListed(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleNftListed
+        - event: NftListingCancelled(indexed address,indexed address,uint256)
+          handler: handleNftListingCancelled
+        - event: NftListingUpdated(indexed address,indexed address,uint256,uint256)
+          handler: handleNftListingUpdated
+      file: ./src/market-place.ts
+  - kind: ethereum
+    name: NarutoNft
+    network: sepolia
+    source:
+      address: "0x2761992756dB993C800a468D1B08431F117540Bf"
+      abi: NarutoNft
+      startBlock: 5161922
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NftMinted
+      abis:
+        - name: NarutoNft
+          file: ./abis/NarutoNft.json
+      eventHandlers:
+        - event: NftMinted(uint8,address,string,uint256)
+          handler: handleNftMinted
+      file: ./src/naruto-nft.ts
