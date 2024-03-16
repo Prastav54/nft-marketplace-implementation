@@ -1,41 +1,31 @@
-import { useState } from "react";
-import { useWeb3Contract } from "react-moralis";
-import { Input, Modal, useNotification } from "web3uikit";
+/* eslint-disable react/prop-types */
 import { ethers } from "ethers";
+import { useState } from "react";
+import { Input, Modal, useNotification } from "web3uikit";
+import { useUpdatePrice } from "../../hooks/useUpdatePrice";
 import { handleError } from "../../utils/appUtils";
 
 export default function UpdateNftModal({
-  narutoNftAddress,
   tokenId,
-  abi,
   defaultPrice,
-  address,
   isVisible,
   onClose,
   handleSuccess,
 }) {
   const [price, setPrice] = useState(0);
-  const { runContractFunction } = useWeb3Contract();
+  const { updatePrice } = useUpdatePrice(tokenId, price);
   const dispatch = useNotification();
 
-  async function updatePrice() {
-    const approveOptions = {
-      abi: abi,
-      contractAddress: address,
-      functionName: "updateNftListing",
-      params: {
-        nftAddress: narutoNftAddress,
-        tokenId: +tokenId,
-        newPrice: ethers.utils.parseEther(`${price}`),
-      },
-    };
-
-    await runContractFunction({
-      params: approveOptions,
+  const handleUpdatePrice = () => {
+    if ((price || 0) <= 0) {
+      handleError("", dispatch, "Price Should be Greater than 0");
+      return;
+    }
+    updatePrice({
       onSuccess: (tx) => handleSuccess(tx),
       onError: (error) => handleError(error, dispatch),
     });
-  }
+  };
 
   return (
     <Modal
@@ -43,18 +33,14 @@ export default function UpdateNftModal({
       onCancel={onClose}
       title="Update NFT"
       onCloseButtonPressed={onClose}
-      onOk={() => {
-        if (price <= 0) {
-          alert("Price Should be Greater than 0");
-          return;
-        }
-        updatePrice();
-      }}
+      onOk={handleUpdatePrice}
     >
-      <p>{`Current NFT Price is ${ethers.utils.formatUnits(
-        defaultPrice || 0,
-        "ether"
-      )} eth`}</p>
+      <div className="mb-6">
+        <p>{`Current NFT Price is ${ethers.utils.formatUnits(
+          defaultPrice || 0,
+          "ether"
+        )} eth`}</p>
+      </div>
       <Input
         label="Update Price (in ETH)"
         name="price"

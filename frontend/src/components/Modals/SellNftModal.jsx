@@ -1,61 +1,41 @@
-import { useState } from "react";
-import { useWeb3Contract } from "react-moralis";
-import { Input, Modal, useNotification } from "web3uikit";
+/* eslint-disable react/prop-types */
 import { ethers } from "ethers";
+import { useState } from "react";
+import { Input, Modal, useNotification } from "web3uikit";
+import { useApprove } from "../../hooks/useApprove";
+import { useListNft } from "../../hooks/useListNft";
 import { handleError } from "../../utils/appUtils";
 
 export default function SellNftModal({
-  narutoNftAddress,
   tokenId,
-  abi,
-  address,
   isVisible,
   onClose,
   handleSuccess,
-  narutoAbi,
   defaultPrice,
 }) {
   const [price, setPrice] = useState(0);
-  const { runContractFunction } = useWeb3Contract();
+  const { approve } = useApprove(tokenId);
+  const { listNft } = useListNft(tokenId, price);
   const dispatch = useNotification();
 
-  async function approveAndList() {
-    const approveOptions = {
-      abi: narutoAbi,
-      contractAddress: narutoNftAddress,
-      functionName: "approve",
-      params: {
-        to: address,
-        tokenId: tokenId,
-      },
-    };
-
-    await runContractFunction({
-      params: approveOptions,
-      onSuccess: (tx) => handleApproveSuccess(tx),
-      onError: (error) => handleError(error, dispatch),
-    });
-  }
-
   async function handleApproveSuccess(tx) {
-    await tx.wait();
-    const listOptions = {
-      abi: abi,
-      contractAddress: address,
-      functionName: "listNft",
-      params: {
-        nftAddress: narutoNftAddress,
-        tokenId: tokenId,
-        price: ethers.utils.parseEther(`${price}`),
-      },
-    };
-
-    await runContractFunction({
-      params: listOptions,
+    await tx.wait(1);
+    listNft({
       onSuccess: (tx) => handleSuccess(tx),
       onError: (error) => handleError(error, dispatch),
     });
   }
+
+  const handleSellNft = () => {
+    if ((price || 0) <= 0) {
+      handleError("", dispatch, "Price Should be Greater than 0");
+      return;
+    }
+    approve({
+      onSuccess: (tx) => handleApproveSuccess(tx),
+      onError: (error) => handleError(error, dispatch),
+    });
+  };
 
   return (
     <Modal
@@ -63,20 +43,17 @@ export default function SellNftModal({
       onCancel={onClose}
       title="Sell NFT"
       onCloseButtonPressed={onClose}
-      onOk={() => {
-        if (price <= 0) {
-          alert("Price Should be Greater than 0");
-          return;
-        }
-        approveAndList();
-      }}
+      onOk={handleSellNft}
     >
-      {defaultPrice && (
-        <p>{`You bought this ntf in ${ethers.utils.formatUnits(
-          defaultPrice || 0,
-          "ether"
-        )} eth`}</p>
-      )}
+      <div className="mb-6">
+        {defaultPrice && (
+          <p>{`You bought this ntf in ${ethers.utils.formatUnits(
+            defaultPrice || 0,
+            "ether"
+          )} eth`}</p>
+        )}
+      </div>
+
       <Input
         label="Price (in ETH)"
         name="price"
@@ -85,6 +62,7 @@ export default function SellNftModal({
           setPrice(event.target.value);
         }}
       />
+      <br />
     </Modal>
   );
 }

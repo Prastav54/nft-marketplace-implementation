@@ -1,31 +1,17 @@
-import { useWeb3Contract } from "react-moralis";
+/* eslint-disable react/prop-types */
 import { Modal, useNotification } from "web3uikit";
 import { SUCCESS, SUCCESS_MESSAGE } from "../../constants/AppConstants";
+import { useCancelNft } from "../../hooks/useCancelNft";
 import { handleError } from "../../utils/appUtils";
 
-export default function CancelNftModal({
-  isVisible,
-  setIsVisible,
-  abi,
-  address,
-  narutoNftAddress,
-  tokenId,
-}) {
+export default function CancelNftModal({ isVisible, setIsVisible, tokenId }) {
+  const { cancelNft } = useCancelNft(tokenId);
+
   const onClose = () => {
     setIsVisible(false);
   };
 
   const dispatch = useNotification();
-
-  const { runContractFunction: cancelNft } = useWeb3Contract({
-    abi: abi,
-    contractAddress: address,
-    functionName: "cancelNftListing",
-    params: {
-      nftAddress: narutoNftAddress,
-      tokenId: tokenId,
-    },
-  });
 
   const handleCancelNftSuccess = async (tx) => {
     await tx.wait(1);
@@ -44,6 +30,7 @@ export default function CancelNftModal({
       onCancel={onClose}
       title="Cancel NFT"
       onCloseButtonPressed={onClose}
+      isCentered
       onOk={() => {
         cancelNft({
           onError: (error) => handleError(error, dispatch),

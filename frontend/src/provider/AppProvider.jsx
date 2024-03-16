@@ -1,10 +1,14 @@
+/* eslint-disable react/prop-types */
+import { LoadingOutlined } from "@ant-design/icons";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { App as AntdApp, Button, ConfigProvider } from "antd";
+import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { MoralisProvider } from "react-moralis";
-import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import Header from "../components/Header";
 import { BrowserRouter as Router } from "react-router-dom";
-import React from "react";
 import { NotificationProvider } from "web3uikit";
+import { Layout } from "../components/layout";
+import { antdThemeConfig } from "../config/antd";
 
 const ErrorFallback = () => {
   return (
@@ -13,12 +17,9 @@ const ErrorFallback = () => {
       role="alert"
     >
       <h2 className="text-lg font-semibold">Ooops, something went wrong</h2>
-      <button
-        type="primary"
-        onClick={() => window.location.assign(window.location.origin)}
-      >
+      <Button type="primary" href={window.location.origin}>
         Refresh
-      </button>
+      </Button>
     </div>
   );
 };
@@ -26,6 +27,7 @@ const ErrorFallback = () => {
 const InProgressComponent = () => {
   return (
     <div className="flex h-full items-center justify-center gap-x-1.5 p-[100px]">
+      <LoadingOutlined />
       <span>Loading...</span>
     </div>
   );
@@ -43,8 +45,13 @@ export const AppProvider = ({ children }) => {
         <MoralisProvider initializeOnMount={false}>
           <ApolloProvider client={client}>
             <NotificationProvider>
-              <Header />
-              <Router>{children}</Router>
+              <ConfigProvider theme={antdThemeConfig}>
+                <AntdApp>
+                  <Router>
+                    <Layout>{children}</Layout>
+                  </Router>
+                </AntdApp>
+              </ConfigProvider>
             </NotificationProvider>
           </ApolloProvider>
         </MoralisProvider>

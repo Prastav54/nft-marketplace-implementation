@@ -17,11 +17,15 @@ export const lazyImport = (factory, name) => {
   });
 };
 
-export const handleError = (error, dispatch) => {
+export const handleError = (
+  error,
+  dispatch,
+  errorMessage = SOMETHING_WENT_WRONG
+) => {
   console.log(error);
   dispatch({
     type: ERROR,
-    message: SOMETHING_WENT_WRONG,
+    message: errorMessage,
     position: "topR",
     title: "Error Occured",
   });

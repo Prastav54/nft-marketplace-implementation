@@ -1,26 +1,23 @@
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import { useMoralis, useWeb3Contract } from "react-moralis";
+import { useOutletContext } from "react-router-dom";
 import { useNotification } from "web3uikit";
-import MarketPlaceContractAddress from "../constants/addressAndABI/MarketPlaceContractAddress.json";
-import MarketPlaceAbi from "../constants/addressAndABI/MarketPlaceNFTAbi.json";
-import NarutoNTFAbi from "../constants/addressAndABI/NarutoNFTAbi.json";
-import NarutoNTFContractAddress from "../constants/addressAndABI/NarutoNTFContractAddress.json";
-import { OWNED_NTF_QUERY } from "../constants/GraphQueries";
 import SellNftModal from "../components/Modals/SellNftModal";
 import UpdateNftModal from "../components/Modals/UpdateNftModal";
+import { SUCCESS, SUCCESS_MESSAGE } from "../constants/AppConstants";
+import { OWNED_NTF_QUERY } from "../constants/GraphQueries";
+import { useGetCollectedAmount } from "../hooks/useGetCollectedAmount";
+import { useGetMintFee } from "../hooks/useGetMintFee";
+import { useRequestNft } from "../hooks/useRequestNft";
+import { useWithdrawAmount } from "../hooks/useWithdrawAmount";
 import { getImage, handleError } from "../utils/appUtils";
 import { ethers } from "ethers";
-import { SUCCESS, SUCCESS_MESSAGE } from "../constants/AppConstants";
 
 export const NftOwned = () => {
-  const { chainId: chainIdHex, account, isWeb3Enabled } = useMoralis();
+  const { account } = useOutletContext();
   const [balanceToWithdraw, setBalanceToWithdraw] = useState();
-  const chainId = parseInt(chainIdHex);
-  const marketPlaceContractAddress =
-    MarketPlaceContractAddress[chainId]?.[0] || "";
-  const narutoNftAddress = NarutoNTFContractAddress[chainId]?.[0] || "";
-  const { data: ownedItem } = useQuery(OWNED_NTF_QUERY, {
+  const [mintFee, setMintFee] = useState();
+  const { data: ownedItem, refetch } = useQuery(OWNED_NTF_QUERY, {
     variables: { owner: account },
   });
   const [openSellNftModal, setOpenSellNftModal] = useState(false);
@@ -28,7 +25,25 @@ export const NftOwned = () => {
   const [nftDescription, setNftDescription] = useState({});
 
   const dispatch = useNotification();
-  const { runContractFunction } = useWeb3Contract();
+  const { getCollectedAmount } = useGetCollectedAmount();
+  const { getMintFee } = useGetMintFee();
+  const { requestNft } = useRequestNft(mintFee);
+  const { withdrawAmount } = useWithdrawAmount();
+
+  useEffect(() => {
+    getTotalAmountCollected();
+    getFeeForMinting();
+  }, [account]);
+
+  const getTotalAmountCollected = async () => {
+    const response = await getCollectedAmount();
+    setBalanceToWithdraw(response.toString());
+  };
+
+  const getFeeForMinting = async () => {
+    const response = await getMintFee();
+    setMintFee(response);
+  };
 
   const handleSellNft = (nftDetail) => {
     setOpenSellNftModal(true);
@@ -50,10 +65,11 @@ export const NftOwned = () => {
     await tx.wait(1);
     dispatch({
       type: SUCCESS,
-      message: "NFT sold. Please refresh your page",
+      message: "NFT sold.",
       title: SUCCESS_MESSAGE,
       position: "topR",
     });
+    refetch();
     handleModalClose();
   };
 
@@ -61,117 +77,126 @@ export const NftOwned = () => {
     await tx.wait(1);
     dispatch({
       type: SUCCESS,
-      message: "NFT price updated. Please refresh your page",
+      message: "NFT price updated.",
       title: SUCCESS_MESSAGE,
       position: "topR",
     });
+    refetch();
     handleModalClose();
   };
-
-  async function updateAvailableBalance() {
-    const returnedProceeds = await runContractFunction({
-      params: {
-        abi: MarketPlaceAbi,
-        contractAddress: marketPlaceContractAddress,
-        functionName: "getBalance",
-        params: {
-          seller: account,
-        },
-      },
-      onError: (error) => handleError(error, dispatch),
-    });
-    if (returnedProceeds) {
-      setBalanceToWithdraw(returnedProceeds.toString());
-    }
-  }
-
-  const { runContractFunction: withdrawAmount } = useWeb3Contract({
-    abi: MarketPlaceAbi,
-    contractAddress: marketPlaceContractAddress,
-    functionName: "withdrawBalance",
-    params: {},
-  });
 
   const handleWithDrawSuccess = async (tx) => {
     await tx.wait(1);
     dispatch({
       type: SUCCESS,
-      message: "Successfully Withdrawed. Please refresh your page",
+      message: "Successfully Withdrawed.",
       title: SUCCESS_MESSAGE,
       position: "topR",
     });
     setBalanceToWithdraw();
   };
 
-  useEffect(() => {
-    if (isWeb3Enabled) {
-      updateAvailableBalance();
-    }
-  }, [isWeb3Enabled, account]);
+  const handleRequestSuccess = async (tx) => {
+    await tx.wait(1);
+    dispatch({
+      type: SUCCESS,
+      message:
+        "NFT Requested Successfully. Please refresh page after some time",
+      title: SUCCESS_MESSAGE,
+      position: "topR",
+    });
+  };
 
   return (
-    <>
-      {ownedItem?.nftDescriptions?.length ? (
-        ownedItem.nftDescriptions.map((item) => (
-          <div key={item.id}>
-            <img
-              id={`image-${item.id}`}
-              src={getImage(item.tokenUrl, `image-${item.id}`)}
-              height="200px"
-              width="200px"
-              alt="No Image"
-            ></img>
-            <br />
-            {!item.isListed ? (
-              <button onClick={() => handleSellNft(item)}>Sell</button>
-            ) : (
-              <>
-                <button onClick={() => handleUpdateNft(item)}>Update</button>
-              </>
-            )}
-            <br />
+    <div className="bg-[#04123C] overflow-auto h-[89vh] pt-4 px-6">
+      <div>
+        <div className="flex space-x-7 pb-8 items-end justify-end text-white">
+          <button
+            onClick={async () => {
+              if (mintFee) {
+                await requestNft({
+                  onSuccess: (tx) => handleRequestSuccess(tx),
+                  onError: (error) => handleError(error, dispatch),
+                });
+              }
+            }}
+            className="text-[#04123C] font-semibold bg-[#F2F6FF] px-8 rounded-2xl py-2"
+          >
+            Mint NFT
+          </button>
+
+          <button
+            disabled={!balanceToWithdraw}
+            onClick={() =>
+              withdrawAmount({
+                onError: (error) => handleError(error, dispatch),
+                onSuccess: (tx) => handleWithDrawSuccess(tx),
+              })
+            }
+            className={`text-[#04123C] font-semibold  px-8 rounded-2xl py-2 ${
+              balanceToWithdraw ? "bg-gray-300" : "bg-[#F2F6FF]"
+            }`}
+          >
+            {`Withdraw ${
+              +balanceToWithdraw
+                ? ethers.utils.formatUnits(balanceToWithdraw, "ether") +
+                  " MATIC"
+                : ""
+            }`}
+          </button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 rounded">
+        {ownedItem?.nftDescriptions?.length ? (
+          ownedItem.nftDescriptions.map((item) => (
+            <div key={item.id} className="h-[300px] w-[250px] mt-3">
+              <img
+                id={`image-${item.id}`}
+                src={getImage(item.tokenUrl, `image-${item.id}`)}
+                className="h-full w-full object-cover rounded-md"
+                alt="No Image"
+              ></img>
+              <br />
+              {!item.isListed ? (
+                <button
+                  className="text-[#04123C] font-semibold bg-[#808B96] px-8 rounded-2xl py-2"
+                  onClick={() => handleSellNft(item)}
+                >
+                  Sell
+                </button>
+              ) : (
+                <>
+                  <button
+                    className="text-[#04123C] font-semibold bg-[#808B96] px-8 rounded-2xl py-2"
+                    onClick={() => handleUpdateNft(item)}
+                  >
+                    Update
+                  </button>
+                </>
+              )}
+              <br />
+            </div>
+          ))
+        ) : (
+          <div className="grid place-items-center">
+            <b className="text-[#ffff]">No List Found</b>
           </div>
-        ))
-      ) : (
-        <>No List Found</>
-      )}
+        )}
+      </div>
       <SellNftModal
         isVisible={openSellNftModal}
         tokenId={nftDescription.tokenId}
-        narutoNftAddress={narutoNftAddress}
-        narutoAbi={NarutoNTFAbi}
-        abi={MarketPlaceAbi}
         defaultPrice={nftDescription.price}
-        address={marketPlaceContractAddress}
         onClose={handleModalClose}
         handleSuccess={handleSellNftSuccess}
       />
       <UpdateNftModal
         isVisible={openUpdateNftModal}
         tokenId={nftDescription.tokenId}
-        narutoNftAddress={narutoNftAddress}
         defaultPrice={nftDescription.price}
-        abi={MarketPlaceAbi}
-        address={marketPlaceContractAddress}
         onClose={handleModalClose}
         handleSuccess={handleUpdateSuccess}
       />
-      <p>{`You have ${ethers.utils.formatUnits(
-        balanceToWithdraw || 0,
-        "ether"
-      )} eth to withdraw`}</p>
-      {+balanceToWithdraw > 0 && (
-        <button
-          onClick={() =>
-            withdrawAmount({
-              onError: (error) => handleError(error, dispatch),
-              onSuccess: (tx) => handleWithDrawSuccess(tx),
-            })
-          }
-        >
-          Withdraw
-        </button>
-      )}
-    </>
+    </div>
   );
 };
