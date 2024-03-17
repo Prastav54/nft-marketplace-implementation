@@ -7,6 +7,7 @@ import NarutoNftAbi from "../constants/addressAndABI/NarutoNFTAbi.json";
 import MarketAddress from "../constants/addressAndABI/MarketPlaceContractAddress.json";
 import NarutoAddress from "../constants/addressAndABI/NarutoNTFContractAddress.json";
 import { lazyImport } from "../utils/appUtils";
+import Header from "../components/header";
 
 const { ListNft } = lazyImport(() => import("../pages/ListNft"), "ListNft");
 const { NftOwned } = lazyImport(() => import("../pages/NftOwned"), "NftOwned");
@@ -24,6 +25,7 @@ const User = () => {
         </div>
       }
     >
+      <Header />
       <Outlet
         context={{
           narutoAddress,

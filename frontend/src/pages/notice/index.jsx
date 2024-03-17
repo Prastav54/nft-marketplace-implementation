@@ -1,3 +1,4 @@
+import { ConnectButton } from "web3uikit";
 import notice from "../../assets/notice.png";
 
 export const NoticePage = () => {
@@ -11,6 +12,9 @@ export const NoticePage = () => {
             connected to the correct blockchain. For now we only support Polygon
             Mumbai network.
           </p>
+        </div>
+        <div className="flex justify-center">
+          <ConnectButton />
         </div>
       </div>
     </div>
