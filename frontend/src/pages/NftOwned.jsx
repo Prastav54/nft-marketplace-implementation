@@ -108,7 +108,7 @@ export const NftOwned = () => {
   };
 
   return (
-    <div className="bg-[#04123C] overflow-auto h-[89vh] pt-4 px-6">
+    <div className="bg-[#04123C] overflow-auto h-[90vh] pt-4 px-6">
       <div>
         <div className="flex space-x-7 pb-8 items-end justify-end text-white">
           <button
@@ -146,7 +146,7 @@ export const NftOwned = () => {
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 rounded">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 rounded">
         {ownedItem?.nftDescriptions?.length ? (
           ownedItem.nftDescriptions.map((item) => (
             <div key={item.id} className="h-[300px] w-[250px] mt-3">
