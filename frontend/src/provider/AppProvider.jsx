@@ -32,7 +32,7 @@ const InProgressComponent = () => {
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: import.meta.env.VITE_SUBGRAPH_URL,
+  uri: "https://api.studio.thegraph.com/query/63990/naruto-nft-marketplace/v0.0.2",
 });
 
 export const AppProvider = ({ children }) => {

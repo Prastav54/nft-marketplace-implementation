@@ -17,6 +17,7 @@ const User = () => {
   const chainId = parseInt(chainIdHex);
   const narutoAddress = NarutoAddress[chainId]?.[0] || "";
   const marketplaceAddress = MarketAddress[chainId]?.[0] || "";
+
   return (
     <Suspense
       fallback={

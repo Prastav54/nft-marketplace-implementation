@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MarketPlace
-    network: mumbai
+    network: sepolia
     source:
-      address: "0x615ceFA901761737ce4935FAc8ecE657160BAf69"
+      address: "0x6EC231921EC11132F7c85549093a82fb98853527"
       abi: MarketPlace
-      startBlock: 47073343
+      startBlock: 5907966
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -35,11 +35,11 @@ dataSources:
       file: ./src/market-place.ts
   - kind: ethereum
     name: NarutoNft
-    network: mumbai
+    network: sepolia
     source:
-      address: "0xe129B2541C397C943C1e5B7F9187094beF6c1e27"
+      address: "0xeA369D10c661F2F54b71a716e332a547fB07921c"
       abi: NarutoNft
-      startBlock: 47073331
+      startBlock: 5907960
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
