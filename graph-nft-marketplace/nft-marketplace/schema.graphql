@@ -1,8 +1,0 @@
-type NftDescription @entity {
-  id: ID!
-  owner: Bytes! # address
-  tokenId: BigInt! # uint256
-  price: BigInt # uint256
-  tokenUrl: String!
-  isListed: Boolean!
-}
